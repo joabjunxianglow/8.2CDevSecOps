@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        SONAR_TOKEN = credentials('5efa670fa5e938802314160a9ba9e420abd50c84')
+        SONAR_TOKEN = credentials('SONAR_TOKEN')
     }
     stages {
         stage('Checkout') {
@@ -32,12 +32,15 @@ pipeline {
         }
         stage('SonarCloud Analysis'){
             steps {
-                bat '''
-                    powershell -Command "Invoke-WebRequest -Uri https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-7.2.0.5079-windows-x64.zip -OutFile sonar-scanner.zip"
-                    powershell -Command "Expand-Archive -Path sonar-scanner.zip -DestinationPath %WORKSPACE%\\sonar-scanner -Force"
-                    set PATH=%WORKSPACE%\\sonar-scanner\\sonar-scanner-7.2.0.5079-windows-x64\bin;%PATH%
-                    sonar-scanner -Dsonar.login=%SONAR_TOKEN%
-                '''
+                withCredentials([string(credentialsId: 'SONAR_TOKEN', variable 'SONAR_TOKEN')]){
+                    bat '''
+                        powershell -Command "Invoke-WebRequest -Uri https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-7.2.0.5079-windows-x64.zip -OutFile sonar-scanner.zip"
+                        powershell -Command "Expand-Archive -Path sonar-scanner.zip -DestinationPath %WORKSPACE%\\sonar-scanner -Force"
+                        set PATH=%WORKSPACE%\\sonar-scanner\\sonar-scanner-7.2.0.5079-windows-x64\bin;%PATH%
+                        sonar-scanner -Dsonar.login=%SONAR_TOKEN%
+                    '''
+                }
+                
             }
         }
     }
