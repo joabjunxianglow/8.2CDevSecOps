@@ -32,7 +32,7 @@ pipeline {
         }
         stage('SonarCloud Analysis'){
             steps {
-                withCredentials([string(credentialsId: 'SONAR_TOKEN', variable 'SONAR_TOKEN')]){
+                withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]){
                     bat '''
                         powershell -Command "Invoke-WebRequest -Uri https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-7.2.0.5079-windows-x64.zip -OutFile sonar-scanner.zip"
                         powershell -Command "Expand-Archive -Path sonar-scanner.zip -DestinationPath %WORKSPACE%\\sonar-scanner -Force"
